@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>saleschanceadd</title>
+    <link href="./layui/css/layui.css" rel="stylesheet">
+</head>
+
+<body style="padding: 25px;">
+
+<form class="layui-form" lay-filter="addContactForm">
+    <div class="layui-form-item"><label class="layui-form-label">客户名称</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="cusName" placeholder="请输入客户名称" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">机会来源</label>
+        <div class="layui-input-block">
+            <select name="salChanceSource">
+                <option value=""></option>
+                <option value="1">促销</option>
+                <option value="2">广告</option>
+                <option value="3">搜索引擎</option>
+                <option value="4">线上咨询</option>
+                <option value="5">电话咨询</option>
+                <option value="6">邮件咨询</option>
+                <option value="7">客户介绍</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">联系人</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="salContact" placeholder="请输入联系人" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">联系人电话</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="salContactTel" placeholder="请输入联系人电话" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">成功几率（%）</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="salSuccessRate" placeholder="请输入成功几率" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">概要</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="salAbs" placeholder="请输入概要" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">机会描述</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="salDesc" placeholder="请输入机会描述" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">创建人</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="salCreator" placeholder="请输入创建人" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-filter="submitSaleChanceAdd" lay-submit="" type="submit">新增</button>
+            <button class="layui-btn layui-btn-primary" type="reset">重置</button>
+        </div>
+    </div>
+</form>
+
+
+<script src="./layui/layui.js"></script>
+<script>
+    layui.use(['form', 'jquery'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+
+        let id = parent.addCusId
+        console.log(id)
+        // console.log(param)
+        //监听提交
+        form.on('submit(submitSaleChanceAdd)', function (data) {
+            data.field.cusId = id
+            //异步（ajax）提交
+            $.ajax({
+                type: "post"
+                , url: "http://localhost:8080/saleChance/addSaleChance"
+                , dataType: "json"
+                , data: data.field
+                , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
+                    //刷新表格
+                    parent.table.reload("test", {})
+                    //关闭窗口
+                    let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index); //再执行关闭
+                }
+            })
+            //避免页面因form的提交而刷新
+            return false;
+        });
+    })
+</script>
+</body>
+</html>

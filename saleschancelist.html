@@ -13,10 +13,10 @@
 <table class="layui-hide" id="test" lay-filter="test"></table>
 <script id="toolbarDemo" type="text/html">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="addCus">新增</button>
-        <button class="layui-btn layui-btn-sm" lay-event="edit">修改</button>
-        <button class="layui-btn layui-btn-sm" lay-event="contact" style="background-color: #1e9fff">查看联系人</button>
-        <button class="layui-btn layui-btn-sm" lay-event="deleteCus" style="background-color: red">删除</button>
+        <button class="layui-btn layui-btn-sm" lay-event="addSaleChance">新增</button>
+        <button class="layui-btn layui-btn-sm" lay-event="editSaleChance">修改</button>
+        <button class="layui-btn layui-btn-sm" lay-event="assto" style="background-color: #1e9fff">指派任务</button>
+        <button class="layui-btn layui-btn-sm" lay-event="deleteSaleChance" style="background-color: red">删除</button>
     </div>
 </script>
 <script src="./layui/layui.js"></script>
@@ -24,11 +24,13 @@
     //弹出窗口填充数据的变量
     var row = null;
     var table = null;
+    var ass = null;
 
 
-    layui.use(['table', 'jquery'], function () {
+    layui.use(['table', 'jquery', 'util'], function () {
         table = layui.table;
         var $ = layui.jquery;
+        var util = layui.util;
 
         table.render({
             elem: '#test'
@@ -108,18 +110,19 @@
             var checkStatus = table.checkStatus(obj.config.id);
             var data = checkStatus.data;
             switch (obj.event) {
-                case 'edit':
+                case 'editSaleChance':
                     //选中行的数据的数组
                     if (data.length == 0) {
                         layer.msg("请选择要修改的行")
                     } else if (data.length > 1) {
                         layer.msg("一次只能修改一行数据")
-                    } else {
+                    } else if (data[0].salState == 1) {
+                        ass = data[0].salId
                         row = data[0]  //把选中行对象赋给row变量
                         //弹出窗口
                         layer.open({
                             type: 2 //此处以iframe举例
-                            , title: '修改客户信息'
+                            , title: '修改销售机会信息'
                             , area: ['390px', '450px']
                             , shade: 0.3   //背景透明度，取值范围0~1
                             , maxmin: true  //窗口是否允许最大化和最小化
@@ -127,14 +130,16 @@
                                 ($(window).height() - 450) / 2
                                 , ($(window).width() - 390) / 2
                             ]
-                            , content: 'customerupdate.html' //弹出窗口的页面内容
+                            , content: 'saleschanceupdate.html' //弹出窗口的页面内容
                         });
+                    } else {
+                        layer.msg("只可以修改状态为”未分配“的销售机会")
                     }
                     break;
-                case 'addCus':
+                case 'addSaleChance':
                     layer.open({
                         type: 2 //此处以iframe举例
-                        , title: '新增客户信息'
+                        , title: '新增销售机会'
                         , area: ['390px', '450px']
                         , shade: 0.3   //背景透明度，取值范围0~1
                         , maxmin: true  //窗口是否允许最大化和最小化
@@ -142,27 +147,29 @@
                             ($(window).height() - 450) / 2
                             , ($(window).width() - 390) / 2
                         ]
-                        , content: 'customeradd.html' //弹出窗口的页面内容
+                        , content: 'saleschanceadd.html' //弹出窗口的页面内容
                     });
                     break;
-                case 'deleteCus':
+                case 'deleteSaleChance':
                     $
                     var data1 = checkStatus.data;
                     if (data1.length == 0) {
                         layer.msg("请选择要删除的行")
+                    } else if (data[0].salState != 1) {
+                        layer.msg("只可以删除状态为”未分配“的销售机会")
                     } else {
-                        layer.confirm('确定要删除选中的用户吗？', function (index) {
+                        layer.confirm('确定要删除选中的销售机会吗？', function (index) {
                             //把选中数据的id保存为一个数组，用于提交给后台
 
                             let arr = []
                             for (let i = 0; i < data1.length; i++) {
-                                let cusIds = data1[i].cusId
-                                arr.push(cusIds)
+                                let salIds = data1[i].salId
+                                arr.push(salIds)
                             }
                             //do something
                             $.ajax({
                                 type: "post"
-                                , url: "http://localhost:8080/customer/deleteCustomer"
+                                , url: "http://localhost:8080/saleChance/deleteSaleChance"
                                 , dataType: "json"
                                 , data: {
                                     ids: arr.join(",")//使用join方法把数组元素用","拼接为字符串，结果如“1，3，5”
@@ -176,15 +183,30 @@
                         });
                     }
                     break;
-                case 'contact': {
+                case 'assto':
+                    //选中行的数据的数组
                     if (data.length == 0) {
-                        layer.msg("请选择要查看的行")
+                        layer.msg("请选择要指派的销售机会信息")
                     } else if (data.length > 1) {
-                        layer.msg("一次只能查看一个客户")
+                        layer.msg("一次只能指派一个销售机会")
+                    } else if (data[0].salState == 1) {
+                        row = data[0]  //把选中行对象赋给row变量
+                        //弹出窗口
+                        layer.open({
+                            type: 2 //此处以iframe举例
+                            , title: '指派'
+                            , area: ['390px', '450px']
+                            , shade: 0.3   //背景透明度，取值范围0~1
+                            , maxmin: true  //窗口是否允许最大化和最小化
+                            , offset: [ //居中显示
+                                ($(window).height() - 450) / 2
+                                , ($(window).width() - 390) / 2
+                            ]
+                            , content: 'saleschanceassto.html' //弹出窗口的页面内容
+                        });
                     } else {
-                        window.location.href = 'contactlist.html?cusId=' + data[0].cusId
+                        layer.msg("只可以指派状态为”未分配“的销售机会")
                     }
-                }
                     break;
             }
         })

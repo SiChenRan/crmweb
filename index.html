@@ -10,6 +10,7 @@
             background-color: lightseagreen;
             color: #fff;
         }
+
         .layui-layout-admin .layui-footer {
             position: fixed;
             left: 200px;
@@ -23,6 +24,12 @@
             background-color: cadetblue;
         }
     </style>
+
+    <script>
+        if(localStorage.getItem("token")==undefined){
+            window.location.href="login.html"
+        }
+    </script>
 </head>
 <body>
 <div class="layui-layout layui-layout-admin">
@@ -36,14 +43,12 @@
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item layui-hide layui-show-md-inline-block">
                 <a href="javascript:;">
-                    <img class="layui-nav-img"
-                         src="//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg">
-                    tester
+                    <!-- <img src="//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" class="layui-nav-img"> -->
+                    <span id="userName"></span>
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="">Your Profile</a></dd>
-                    <dd><a href="">Settings</a></dd>
-                    <dd><a href="">Sign out</a></dd>
+                    <dd><a href="">用户信息</a></dd>
+                    <dd><a href="javascript:localStorage.clear();location.href='login.html'">退出</a></dd>
                 </dl>
             </li>
             <li class="layui-nav-item" lay-header-event="menuRight" lay-unselect>
@@ -116,6 +121,7 @@
             , util = layui.util
             , $ = layui.$;
 
+
         //头部事件
         util.event('lay-header-event', {
             //左侧菜单事件
@@ -133,6 +139,7 @@
                 });
             }
         });
+        $("#userName").text(localStorage.getItem("suName"))
 
     });
 </script>

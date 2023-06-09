@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>customerupdate</title>
+    <link href="./layui/css/layui.css" rel="stylesheet">
+</head>
+
+<body style="padding: 25px;">
+
+<form class="layui-form" lay-filter="asstoSaleChanceForm">
+    <!-- 用隐藏的输入框保存主键（客户编号），后台做更新时候要根据主键做update -->
+    <input name="salId" type="hidden"/>
+    <div class="layui-form-item"><label class="layui-form-label">被指派人</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="salAssto" placeholder="请输入被指派人" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-filter="submitSaleChanceAssto" lay-submit="" type="submit">修改</button>
+            <button class="layui-btn layui-btn-primary" type="reset">重置</button>
+        </div>
+    </div>
+</form>
+
+
+<script src="./layui/layui.js"></script>
+<script>
+    layui.use(['form', 'jquery'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+
+
+        let v = parent.row.salId
+        console.log(v)
+        //给表单填充内容
+        form.val('asstoSaleChanceForm', parent.row);
+
+        //监听提交
+        form.on('submit(submitSaleChanceAssto)', function (data) {
+            //异步（ajax）提交
+            $.ajax({
+                type: "post"
+                , url: "http://localhost:8080/saleChance/assto"
+                , dataType: "json"
+                , data: data.field
+                , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
+                    //刷新表格
+                    parent.table.reload("test",{})
+                    //关闭窗口
+                    let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index); //再执行关闭
+                }
+            })
+            //避免页面因form的提交而刷新
+            return false;
+        });
+
+    })
+</script>
+</body>
+
+</html>
