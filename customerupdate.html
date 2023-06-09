@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>customerupdate</title>
+    <link href="./layui/css/layui.css" rel="stylesheet">
+</head>
+
+<body style="padding: 25px;">
+
+<form class="layui-form" lay-filter="updateCustomerForm">
+    <!-- 用隐藏的输入框保存主键（客户编号），后台做更新时候要根据主键做update -->
+    <input name="cusId" type="hidden"/>
+    <div class="layui-form-item"><label class="layui-form-label">客户名称</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="cusName" placeholder="请输入客户名称" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">客户地区</label>
+        <div class="layui-input-block">
+            <select name="cusRegion">
+                <option value=""></option>
+                <option value="东北">东北</option>
+                <option value="西北">西北</option>
+                <option value="华北">华北</option>
+                <option value="华中">华中</option>
+                <option value="华南">华南</option>
+                <option value="西南">西南</option>
+                <option value="华东">华东</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">客户行业</label>
+        <div class="layui-input-block">
+            <select name="cusIndustry">
+                <option value=""></option>
+                <option value="教育">教育</option>
+                <option value="医疗">医疗</option>
+                <option value="金融">金融</option>
+                <option value="制造">制造</option>
+                <option value="服务">服务</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">客户等级</label>
+        <div class="layui-input-block">
+            <select name="cusLevel">
+                <option value=""></option>
+                <option value="VIP客户">VIP客户</option>
+                <option value="大客户">大客户</option>
+                <option value="普通客户">普通客户</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">客户满意度</label>
+        <div class="layui-input-block">
+            <select name="cusRate">
+                <option value=""></option>
+                <option value="1">一星</option>
+                <option value="2">二星</option>
+                <option value="3">三星</option>
+                <option value="4">四星</option>
+                <option value="5">五星</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">客户信用度</label>
+        <div class="layui-input-block">
+            <select name="cusCredit">
+                <option value=""></option>
+                <option value="1">一星</option>
+                <option value="2">二星</option>
+                <option value="3">三星</option>
+                <option value="4">四星</option>
+                <option value="5">五星</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">客户地址</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="cusAddr" placeholder="请输入客户地址" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">客户邮编</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="cusPostcode" placeholder="请输入客户邮编" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">客户电话</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="cusPhone" placeholder="请输入客户电话" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">客户网址</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="cusUrl" placeholder="请输入客户网址" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">客户传真</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="cusFax" placeholder="请输入客户传真" type="text">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-filter="submitCustomerUpdate" lay-submit="" type="submit">修改</button>
+            <button class="layui-btn layui-btn-primary" type="reset">重置</button>
+        </div>
+    </div>
+</form>
+
+
+<script src="./layui/layui.js"></script>
+<script>
+    layui.use(['form', 'jquery'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+
+        //给表单填充内容
+        form.val('updateCustomerForm', parent.row);
+
+        //监听提交
+        form.on('submit(submitCustomerUpdate)', function (data) {
+            //异步（ajax）提交
+            $.ajax({
+                type: "post"
+                , url: "http://localhost:8080/customer/updateCustomer"
+                , dataType: "json"
+                , data: data.field
+                , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
+                    //刷新表格
+                    parent.table.reload("test",{})
+                    //关闭窗口
+                    let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index); //再执行关闭
+                }
+            })
+            //避免页面因form的提交而刷新
+            return false;
+        });
+
+    })
+</script>
+</body>
+
+</html>

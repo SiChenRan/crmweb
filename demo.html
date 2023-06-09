@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./layui/css/layui.css">
+</head>
+<body>
+CRM前端
+<button type="button" class="layui-btn layui-btn-normal">百搭按钮</button>
+<div id="test1"></div>
+<!--栅格布局-->
+<div class="layui-container">
+    <!--行-->
+    <div class="layui-row">
+        <!--每一行有12列-->
+        <div class="layui-col-md4">&nbsp;</div>
+        <div class="layui-col-md4" style="text-align: center">中间放入内容</div>
+        <div class="layui-col-md4">&nbsp;</div>
+    </div>
+</div>
+<script src="./layui/layui.js"></script>
+<script>
+    layui.use(['rate'], function () {
+        let rate = layui.rate;
+        rate.render({
+            elem: '#test1',
+            half: true,
+            text: true,
+            value: 5,
+            setText: function (value) {
+                let arrs = {
+                    '1': '极差',
+                    '2': '差'
+                }
+            }
+        })
+    });
+</script>
+</body>
+</html>
