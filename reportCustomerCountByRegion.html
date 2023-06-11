@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+    <title>reportCustomerCountByRegion</title>
+    <link href="./layui/css/layui.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="main" style="width: 800px;height:400px;"></div>
+
+<script src="./layui/layui.js"></script>
+<script src="./js/echarts.js"></script>
+<script>
+    layui.use(['jquery'], function () {
+
+        var $ = layui.jquery;
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '按地区统计客户数量'//统计图的标题
+            },
+            tooltip: {},//鼠标放在柱子上提示，没有设置表示用默认提示
+            legend: {
+                data: ['人数']//图例，每一种颜色柱子代表的意义
+            },
+            xAxis: {
+                data: []//横坐标上的商品类型
+            },
+            // color: ['lightblue'],
+            yAxis: {},//纵坐标上的刻度，没有设置就按默认方式标注刻度
+            series: [
+                {
+                    name: '人数',//与图例对应
+                    type: 'bar',//统计图类型：bar-柱状图，line-折线图，pie-饼图
+                    data: []//每根柱子的数值
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        $.ajax({
+            type: "get",
+            url: "http://localhost:8080/report/getCustomerCountByRegion",
+            dataType: "json",
+            success: function (obj) {
+                myChart.setOption({
+                    xAxis: {
+                        data: obj.items//横坐标上的商品类型
+                    },
+                    series: [
+                        {
+                            name: '人数',//与图例对应
+                            type: 'bar',//统计图类型：bar-柱状图，line-折线图，pie-饼图
+                            data: obj.values//每根柱子的数值
+                        }
+                    ]
+                })
+            }
+        })
+    });
+</script>
+</body>
+</html>
