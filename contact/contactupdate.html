@@ -5,13 +5,15 @@
     <meta charset="UTF-8">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>contactadd</title>
-    <link href="./layui/css/layui.css" rel="stylesheet">
+    <title>contactupdate</title>
+    <link href="../layui/css/layui.css" rel="stylesheet">
 </head>
 
 <body style="padding: 25px;">
 
-<form class="layui-form" lay-filter="addContactForm">
+<form class="layui-form" lay-filter="updateContactForm">
+    <!-- 用隐藏的输入框保存主键（客户编号），后台做更新时候要根据主键做update -->
+    <input name="conId" type="hidden"/>
     <div class="layui-form-item"><label class="layui-form-label">联系人姓名</label>
         <div class="layui-input-block">
             <input autocomplete="off" class="layui-input" name="conName" placeholder="请输入联系人" type="text">
@@ -22,7 +24,7 @@
         <div class="layui-input-block">
             <select name="conGender">
                 <option value=""></option>
-                <option selected="" value="男">男</option>
+                <option value="男">男</option>
                 <option value="女">女</option>
             </select>
         </div>
@@ -52,40 +54,36 @@
         </div>
     </div>
 
-    <input name="cusId" type="hidden"/>
-
-
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <button class="layui-btn" lay-filter="submitContactAdd" lay-submit="" type="submit">新增</button>
+            <button class="layui-btn" lay-filter="submitContactUpdate" lay-submit="" type="submit">修改</button>
             <button class="layui-btn layui-btn-primary" type="reset">重置</button>
         </div>
     </div>
 </form>
 
 
-<script src="./layui/layui.js"></script>
+<script src="../layui/layui.js"></script>
 <script>
     layui.use(['form', 'jquery'], function () {
         var form = layui.form;
         var $ = layui.jquery;
 
-        let id = parent.addCusId
-        console.log(id)
-        // console.log(param)
+        //给表单填充内容
+        form.val('updateContactForm', parent.row);
+
         //监听提交
-        form.on('submit(submitContactAdd)', function (data) {
-            data.field.cusId = id
+        form.on('submit(submitContactUpdate)', function (data) {
             //异步（ajax）提交
             $.ajax({
                 type: "post"
-                , url: "http://localhost:8080/contact/addContact"
+                , url: "http://localhost:8080/contact/updateContact"
                 , dataType: "json"
                 , data: data.field
                 , headers: {token: localStorage.getItem("token")}
                 , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
                     //刷新表格
-                    parent.table.reload("test", {})
+                    parent.table.reload("test",{})
                     //关闭窗口
                     let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
                     parent.layer.close(index); //再执行关闭
@@ -94,7 +92,9 @@
             //避免页面因form的提交而刷新
             return false;
         });
+
     })
 </script>
 </body>
+
 </html>

@@ -5,15 +5,13 @@
     <meta charset="UTF-8">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>customerupdate</title>
-    <link href="./layui/css/layui.css" rel="stylesheet">
+    <title>saleschanceadd</title>
+    <link href="../layui/css/layui.css" rel="stylesheet">
 </head>
 
 <body style="padding: 25px;">
 
-<form class="layui-form" lay-filter="updateSaleChanceForm">
-    <!-- 用隐藏的输入框保存主键（客户编号），后台做更新时候要根据主键做update -->
-    <input name="salId" type="hidden"/>
+<form class="layui-form" lay-filter="addContactForm">
     <div class="layui-form-item"><label class="layui-form-label">客户名称</label>
         <div class="layui-input-block">
             <input autocomplete="off" class="layui-input" name="cusName" placeholder="请输入客户名称" type="text">
@@ -43,15 +41,13 @@
 
     <div class="layui-form-item"><label class="layui-form-label">联系人电话</label>
         <div class="layui-input-block">
-            <input autocomplete="off" class="layui-input" name="salContactTel" placeholder="请输入联系人电话"
-                   type="text">
+            <input autocomplete="off" class="layui-input" name="salContactTel" placeholder="请输入联系人电话" type="text">
         </div>
     </div>
 
     <div class="layui-form-item"><label class="layui-form-label">成功几率（%）</label>
         <div class="layui-input-block">
-            <input autocomplete="off" class="layui-input" name="salSuccessRate" placeholder="请输入成功几率"
-                   type="text">
+            <input autocomplete="off" class="layui-input" name="salSuccessRate" placeholder="请输入成功几率" type="text">
         </div>
     </div>
 
@@ -75,31 +71,29 @@
 
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <button class="layui-btn" lay-filter="submitSaleChanceUpdate" lay-submit="" type="submit">修改</button>
+            <button class="layui-btn" lay-filter="submitSaleChanceAdd" lay-submit="" type="submit">新增</button>
             <button class="layui-btn layui-btn-primary" type="reset">重置</button>
         </div>
     </div>
 </form>
 
 
-<script src="./layui/layui.js"></script>
+<script src="../layui/layui.js"></script>
 <script>
     layui.use(['form', 'jquery'], function () {
         var form = layui.form;
         var $ = layui.jquery;
 
-
-        let v = parent.row.salId
-        console.log(v)
-        //给表单填充内容
-        form.val('updateSaleChanceForm', parent.row);
-
+        let id = parent.addCusId
+        console.log(id)
+        // console.log(param)
         //监听提交
-        form.on('submit(submitSaleChanceUpdate)', function (data) {
+        form.on('submit(submitSaleChanceAdd)', function (data) {
+            data.field.cusId = id
             //异步（ajax）提交
             $.ajax({
                 type: "post"
-                , url: "http://localhost:8080/saleChance/updateSaleChance"
+                , url: "http://localhost:8080/saleChance/addSaleChance"
                 , dataType: "json"
                 , data: data.field
                 , headers: {token: localStorage.getItem("token")}
@@ -114,9 +108,7 @@
             //避免页面因form的提交而刷新
             return false;
         });
-
     })
 </script>
 </body>
-
 </html>
