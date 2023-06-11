@@ -43,13 +43,15 @@
 
     <div class="layui-form-item"><label class="layui-form-label">联系人电话</label>
         <div class="layui-input-block">
-            <input autocomplete="off" class="layui-input" name="salContactTel" placeholder="请输入联系人电话" type="text">
+            <input autocomplete="off" class="layui-input" name="salContactTel" placeholder="请输入联系人电话"
+                   type="text">
         </div>
     </div>
 
     <div class="layui-form-item"><label class="layui-form-label">成功几率（%）</label>
         <div class="layui-input-block">
-            <input autocomplete="off" class="layui-input" name="salSuccessRate" placeholder="请输入成功几率" type="text">
+            <input autocomplete="off" class="layui-input" name="salSuccessRate" placeholder="请输入成功几率"
+                   type="text">
         </div>
     </div>
 
@@ -103,7 +105,7 @@
                 , headers: {token: localStorage.getItem("token")}
                 , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
                     //刷新表格
-                    parent.table.reload("test",{})
+                    parent.table.reload("test", {})
                     //关闭窗口
                     let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
                     parent.layer.close(index); //再执行关闭
