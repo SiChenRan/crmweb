@@ -6,19 +6,20 @@
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Document</title>
-    <link href="./layui/css/layui.css" rel="stylesheet">
+    <link href="../layui/css/layui.css" rel="stylesheet">
 </head>
 
 <body>
 <table class="layui-hide" id="test" lay-filter="test"></table>
 <script id="toolbarDemo" type="text/html">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="addSer">新增</button>
-        <button class="layui-btn layui-btn-sm" lay-event="editSer">修改</button>
+        <button class="layui-btn layui-btn-sm" lay-event="addCus">新增</button>
+        <button class="layui-btn layui-btn-sm" lay-event="edit">修改</button>
+        <button class="layui-btn layui-btn-sm" lay-event="contact" style="background-color: #1e9fff">查看联系人</button>
         <button class="layui-btn layui-btn-sm" lay-event="deleteCus" style="background-color: red">删除</button>
     </div>
 </script>
-<script src="./layui/layui.js"></script>
+<script src="../layui/layui.js"></script>
 <script>
     //弹出窗口填充数据的变量
     var row = null;
@@ -31,39 +32,59 @@
 
         table.render({
             elem: '#test'
-            , url: 'http://localhost:8080/services/getServicesList'
+            , url: 'http://localhost:8080/customer/getCustomerList'
             , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
             , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
             , defaultToolbar: ['filter']//控制显示哪个默认的工具栏按钮,默认三个
-            , headers: {token: localStorage.getItem("token")}
             , page: true
+            , headers: {token: localStorage.getItem("token")}
             , cols: [[
                 {type: 'checkbox'}
-                , {field: 'serId', width: 100, title: '服务编号'}
-                , {field: 'serAbs', width: 100, title: '服务概要'}
-                , {field: 'serType', width: 100, title: '服务类型'}
-                , {field: 'serDetReq', width: 100, title: '详细信息'}
-                , {field: 'serCusId', width: 100, title: '客户编号'}
-                , {field: 'serCreator', title: '创建人', width: 95} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
-                , {field: 'serCreTime', title: '创建时间', width: 95}
-                , {field: 'serState', title: '状态', width: 100}
-                , {field: 'serAlloTime', title: '分配时间', width: 100}
-                , {field: 'serHandler', width: 120, title: '处理人'}
-                , {field: 'serSolution', width: 100, title: '处理方法'}
-                , {field: 'serHandTime', width: 100, title: '处理时间'}
-                , {field: 'serFeed', width: 100, title: '客户反馈'}
-                , {field: 'serCusRate', width: 135, title: '客户满意度'}
-                , {field: 'serFeedTime', width: 135, title: '反馈时间'}
+                , {field: 'cusId', width: 100, title: '客户编号'}
+                , {field: 'cusName', width: 100, title: '客户名称'}
+                , {field: 'cusRegion', width: 100, title: '客户地区'}
+                , {field: 'cusIndustry', width: 100, title: '客户行业'}
+                , {field: 'cusLevel', title: '客户等级', width: 95} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                , {
+                    field: 'cusRate', title: '客户满意度', width: 95, templet: function (d) {
+                        //在前端将数据库中的状态码，装化为相应的信息
+                        let ret = ''
+                        switch (d.cusRate) {
+                            case 1:
+                                ret = '一星'
+                                break
+                            case 2:
+                                ret = '二星'
+                                break
+                            case 3:
+                                ret = '三星'
+                                break
+                            case 4:
+                                ret = '四星'
+                                break
+                            case 5:
+                                ret = '五星'
+                                break
+                        }
+                        return ret
+                    }
+                }
+                , {field: 'cusCredit', title: '客户信用等级', width: 100}
+                , {field: 'cusAddr', title: '客户地址', width: 100}
+                , {field: 'cusPhone', width: 120, title: '客户手机号'}
+                , {field: 'cusPostcode', width: 100, title: '客户邮编'}
+                , {field: 'cusUrl', width: 100, title: '客户网址'}
+                , {field: 'cusFax', width: 135, title: '客户传真'}
             ]]
         });
 
         //头工具栏事件
         table.on('toolbar(test)', function (obj) {
             var checkStatus = table.checkStatus(obj.config.id);
+            var data = checkStatus.data;
             switch (obj.event) {
-                case 'editSer':
+                case 'edit':
                     //选中行的数据的数组
-                    var data = checkStatus.data;
                     if (data.length == 0) {
                         layer.msg("请选择要修改的行")
                     } else if (data.length > 1) {
@@ -73,7 +94,7 @@
                         //弹出窗口
                         layer.open({
                             type: 2 //此处以iframe举例
-                            , title: '修改服务信息'
+                            , title: '修改客户信息'
                             , area: ['390px', '450px']
                             , shade: 0.3   //背景透明度，取值范围0~1
                             , maxmin: true  //窗口是否允许最大化和最小化
@@ -81,14 +102,14 @@
                                 ($(window).height() - 450) / 2
                                 , ($(window).width() - 390) / 2
                             ]
-                            , content: 'serviceupdate.html' //弹出窗口的页面内容
+                            , content: 'customerupdate.html' //弹出窗口的页面内容
                         });
                     }
                     break;
-                case 'addSer':
+                case 'addCus':
                     layer.open({
                         type: 2 //此处以iframe举例
-                        , title: '新增服务信息'
+                        , title: '新增客户信息'
                         , area: ['390px', '450px']
                         , shade: 0.3   //背景透明度，取值范围0~1
                         , maxmin: true  //窗口是否允许最大化和最小化
@@ -96,7 +117,7 @@
                             ($(window).height() - 450) / 2
                             , ($(window).width() - 390) / 2
                         ]
-                        , content: 'serviceadd.html' //弹出窗口的页面内容
+                        , content: 'customeradd.html' //弹出窗口的页面内容
                     });
                     break;
                 case 'deleteCus':
@@ -105,19 +126,20 @@
                     if (data1.length == 0) {
                         layer.msg("请选择要删除的行")
                     } else {
-                        layer.confirm('确定要删除选中的服务吗？', function (index) {
+                        layer.confirm('确定要删除选中的用户吗？', function (index) {
                             //把选中数据的id保存为一个数组，用于提交给后台
 
                             let arr = []
                             for (let i = 0; i < data1.length; i++) {
-                                let serIds = data1[i].serId
-                                arr.push(serIds)
+                                let cusIds = data1[i].cusId
+                                arr.push(cusIds)
                             }
                             //do something
                             $.ajax({
                                 type: "post"
-                                , url: "http://localhost:8080/services/deleteService"
+                                , url: "http://localhost:8080/customer/deleteCustomer"
                                 , dataType: "json"
+                                , headers: {token: localStorage.getItem("token")}
                                 , data: {
                                     ids: arr.join(",")//使用join方法把数组元素用","拼接为字符串，结果如“1，3，5”
                                 }
@@ -130,10 +152,19 @@
                         });
                     }
                     break;
+                case 'contact': {
+                    if (data.length == 0) {
+                        layer.msg("请选择要查看的行")
+                    } else if (data.length > 1) {
+                        layer.msg("一次只能查看一个客户")
+                    } else {
+                        window.location.href = 'contactlist.html?cusId=' + data[0].cusId
+                    }
+                }
+                    break;
             }
-        });
-
-    });
+        })
+    })
 </script>
 </body>
 </html>
