@@ -46,27 +46,17 @@
 
 <body class="loginBody">
 <form class="layui-form">
-    <!-- <div class="login_face">
-    <img src="../../images/Wjlogo.png" height="60px" class="userAvatar">
-</div> -->
     <div>
         <div class="loginbox-title">登录</div>
-        <!-- <div class="loginbox-social">
-        <div class="social-title">系统</div>
-</div> -->
         <div class="layui-form-item input-item">
             <input autocomplete="off" class="layui-input" id="username" placeholder="请输入用户名" type="text">
         </div>
         <div class="layui-form-item input-item">
             <input autocomplete="off" class="layui-input" id="password" placeholder="请输入密码" type="password">
         </div>
-        <!-- <div class="layui-form-item input-item" id="imgCode">
-    <input type="text" placeholder="请输入验证码" name="code" autocomplete="off" id="code" class="layui-input">
-    <img style="margin-right: 20px" width="100px" id="verify_code_img" height="32"
-         src="/verifyCode/getImg" onclick="javascript:changeImg()"><br>
-</div> -->
         <div class="layui-form-item  input-item">
-            <button class="layui-btn" lay-filter="login" lay-submit style="width:100%">登录</button>
+            <button class="layui-btn" lay-filter="login" lay-submit style="width:45%">登录</button>
+            <button class="layui-btn" lay-filter="login" lay-submit style="width:45%">注册</button>
         </div>
     </div>
 </form>
@@ -87,10 +77,9 @@
                     suPwd: $("#password").val()
                 },
                 success: function (obj) {
-                    debugger
                     if (obj.code == 0) {
                         localStorage.setItem("token", obj.msg);
-                        localStorage.setItem("suName", obj.suName)
+                        localStorage.setItem("suName", obj.obj.suName)
                         location.href = "index.html"
                     } else {
                         layer.msg(obj.msg)
@@ -100,9 +89,18 @@
             })
             return false;
         })
+        form.on('submit(register)', function (data) {
 
+            if (obj.code == 0) {
+                localStorage.setItem("token", obj.msg);
+                localStorage.setItem("suName", obj.obj.suName)
+                location.href = "index.html"
+            } else {
+                layer.msg(obj.msg)
+            }
 
-    });
+        })
+    })
 </script>
 
 </html>

@@ -39,6 +39,7 @@
             , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
             , defaultToolbar: ['filter']//控制显示哪个默认的工具栏按钮,默认三个
             , page: true
+            , headers: {token: localStorage.getItem("token")}
             , cols: [[
                 {type: 'checkbox'}
                 , {field: 'salId', width: 100, title: '编号'}

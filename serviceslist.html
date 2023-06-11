@@ -35,6 +35,7 @@
             , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
             , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
             , defaultToolbar: ['filter']//控制显示哪个默认的工具栏按钮,默认三个
+            , headers: {token: localStorage.getItem("token")}
             , page: true
             , cols: [[
                 {type: 'checkbox'}

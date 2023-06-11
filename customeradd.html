@@ -135,6 +135,7 @@
                 type: "post"
                 , url: "http://localhost:8080/customer/addCustomer"
                 , dataType: "json"
+                , headers: {token: localStorage.getItem("token")}
                 , data: data.field
                 , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
                     //刷新表格
