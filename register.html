@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>register</title>
+    <link href="../layui/css/layui.css" rel="stylesheet">
+</head>
+
+<body style="padding: 25px;">
+
+
+<form class="layui-form" lay-filter="addContactForm">
+
+    <input name="suId" type="hidden"/>
+    <div class="layui-form-item"><label class="layui-form-label">用户名</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="suName" placeholder="请输入用户名" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">密码</label>
+        <div class="layui-input-block">
+            <input type="password" autocomplete="off" class="layui-input" name="suPwd" placeholder="请输入密码" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item"><label class="layui-form-label">用户角色</label>
+        <div class="layui-input-block">
+            <select name="suRole">
+                <option value=""></option>
+                <option value="ADMIN">管理员</option>
+                <option value="SALES">销售员</option>
+                <option value="SUPERVISOR">主管</option>
+                <option value="MANAGER">经理</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-filter="submitSysUserAdd" lay-submit="" type="submit">新增</button>
+            <button class="layui-btn layui-btn-primary" type="reset">重置</button>
+        </div>
+    </div>
+</form>
+
+
+<script src="../layui/layui.js"></script>
+<script>
+    layui.use(['form', 'jquery'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+
+        let id = parent.addCusId
+        console.log(id)
+        // console.log(param)
+        //监听提交
+        form.on('submit(submitSysUserAdd)', function (data) {
+            data.field.cusId = id
+            //异步（ajax）提交
+            $.ajax({
+                type: "post"
+                , url: "http://localhost:8080//sysUser/addSysUser"
+                , dataType: "json"
+                , data: data.field
+                , headers: {token: localStorage.getItem("token")}
+                , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
+                    //刷新表格
+                    parent.table.reload("test", {})
+                    //关闭窗口
+                    let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index); //再执行关闭
+                }
+            })
+            //避免页面因form的提交而刷新
+            return false;
+        });
+    })
+</script>
+</body>
+</html>

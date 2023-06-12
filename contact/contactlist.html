@@ -23,6 +23,7 @@
     //弹出窗口填充数据的变量
     var row = null;
     var table = null;
+    console.log(window.location.href)
     let url = window.location.href //http://127.0.0.1:63343/contactlist.html?cusId=1
     let arr = url.split('?')
     let param = ''
@@ -61,7 +62,8 @@
                 , {field: 'conTel', title: '电话', width: 95} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
                 , {field: 'conPhone', title: '手机'}
                 , {field: 'conDesc', title: '备注'}
-                , {field: 'cusId', title: '客户编号', width: 100}
+                // , {field: 'cusId', title: '客户编号', width: 100}
+                , {field: 'cusName', title: '客户名称', width: 100}
             ]]
         });
 

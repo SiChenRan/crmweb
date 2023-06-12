@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Document</title>
+    <title>devplanList</title>
     <link href="../layui/css/layui.css" rel="stylesheet">
 </head>
-
 <body>
 <table class="layui-hide" id="test" lay-filter="test"></table>
 <script id="toolbarDemo" type="text/html">
@@ -24,7 +22,6 @@
     //弹出窗口填充数据的变量
     var row = null;
     var table = null;
-    console.log(window.location.href)
 
 
     layui.use(['table', 'jquery'], function () {
@@ -153,7 +150,7 @@
                         });
                     }
                     break;
-                case 'contact':
+                case 'contact': {
                     if (data.length == 0) {
                         layer.msg("请选择要查看的行")
                     } else if (data.length > 1) {
@@ -161,6 +158,7 @@
                     } else {
                         window.location.href = '../contact/contactlist.html?cusId=' + data[0].cusId
                     }
+                }
                     break;
             }
         })

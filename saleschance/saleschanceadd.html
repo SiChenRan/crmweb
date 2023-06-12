@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>saleschanceadd</title>
     <link href="../layui/css/layui.css" rel="stylesheet">
+    <title>saleschanceadd</title>
 </head>
 
 <body style="padding: 25px;">
@@ -41,13 +41,15 @@
 
     <div class="layui-form-item"><label class="layui-form-label">联系人电话</label>
         <div class="layui-input-block">
-            <input autocomplete="off" class="layui-input" name="salContactTel" placeholder="请输入联系人电话" type="text">
+            <input autocomplete="off" class="layui-input" name="salContactTel" placeholder="请输入联系人电话"
+                   type="text">
         </div>
     </div>
 
     <div class="layui-form-item"><label class="layui-form-label">成功几率（%）</label>
         <div class="layui-input-block">
-            <input autocomplete="off" class="layui-input" name="salSuccessRate" placeholder="请输入成功几率" type="text">
+            <input autocomplete="off" class="layui-input" name="salSuccessRate" placeholder="请输入成功几率"
+                   type="text">
         </div>
     </div>
 
@@ -63,11 +65,11 @@
         </div>
     </div>
 
-    <div class="layui-form-item"><label class="layui-form-label">创建人</label>
-        <div class="layui-input-block">
-            <input autocomplete="off" class="layui-input" name="salCreator" placeholder="请输入创建人" type="text">
-        </div>
-    </div>
+    <!--    <div class="layui-form-item"><label class="layui-form-label">创建人</label>-->
+    <!--        <div class="layui-input-block">-->
+    <!--            <input autocomplete="off" class="layui-input" name="salCreator" placeholder="请输入创建人" type="text">-->
+    <!--        </div>-->
+    <!--    </div>-->
 
     <div class="layui-form-item">
         <div class="layui-input-block">
@@ -85,11 +87,12 @@
         var $ = layui.jquery;
 
         let id = parent.addCusId
-        console.log(id)
+        console.log(localStorage.getItem("suName"))
         // console.log(param)
         //监听提交
         form.on('submit(submitSaleChanceAdd)', function (data) {
             data.field.cusId = id
+            data.field.salCreator = localStorage.getItem("suName")
             //异步（ajax）提交
             $.ajax({
                 type: "post"

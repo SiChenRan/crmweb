@@ -14,9 +14,17 @@
 <form class="layui-form" lay-filter="asstoSaleChanceForm">
     <!-- 用隐藏的输入框保存主键（客户编号），后台做更新时候要根据主键做update -->
     <input name="salId" type="hidden"/>
+<!--    <div class="layui-form-item"><label class="layui-form-label">被指派人</label>-->
+<!--        <div class="layui-input-block">-->
+<!--            <input autocomplete="off" class="layui-input" name="salAssto" placeholder="请输入被指派人" type="text">-->
+<!--        </div>-->
+<!--    </div>-->
+
     <div class="layui-form-item"><label class="layui-form-label">被指派人</label>
         <div class="layui-input-block">
-            <input autocomplete="off" class="layui-input" name="salAssto" placeholder="请输入被指派人" type="text">
+            <select name="salAssto" id="handler">
+                <option value=""></option>
+            </select>
         </div>
     </div>
 
@@ -40,6 +48,20 @@
         console.log(v)
         //给表单填充内容
         form.val('asstoSaleChanceForm', parent.row);
+
+        //动态初始化客户满意度下拉框
+        $.ajax({
+            type: "get",
+            url: "http://localhost:8080/sysUser/getSalesList",
+            dataType: "json",
+            success: function (obj) {
+                debugger//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
+                for (let i = 0; i < obj.length; i++) {
+                    $("#handler").append('<option value="' + obj[i].suName + '">' + obj[i].suName + '</option>')
+                }
+                form.render();  //解决动态改变的标签没生效的问题
+            }
+        })
 
         //监听提交
         form.on('submit(submitSaleChanceAssto)', function (data) {
