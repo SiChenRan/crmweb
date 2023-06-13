@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="../layui/css/layui.css" rel="stylesheet">
+    <title>devplanexec</title>
+</head>
+<body>
+
+<form class="layui-form" lay-filter="execDevPlanForm">
+    <input name="devId" type="hidden">
+    <div class="layui-form-item"><label class="layui-form-label">执行结果</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="devResult" placeholder="请输入执行结果" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-filter="submitDevPlanExec" lay-submit="" type="submit">修改</button>
+            <button class="layui-btn layui-btn-primary" type="reset">重置</button>
+        </div>
+    </div>
+    <input name="devExecutor" type="hidden">
+</form>
+
+<script src="../layui/layui.js"></script>
+<script>
+    layui.use(['form', 'jquery', 'laydate'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        let laydate = layui.laydate;
+
+
+        let v = parent.row.salId
+        console.log(parent.row)
+        //给表单填充内容
+        form.val('execDevPlanForm', parent.row);
+        laydate.render({
+            elem: '#test1'
+        });
+
+        //监听提交
+        form.on('submit(submitDevPlanExec)', function (data) {
+            data.field.devExecutor = localStorage.getItem("suName")
+            //异步（ajax）提交
+            $.ajax({
+                type: "post"
+                , url: "http://localhost:8080/devPlan/execDevPlan"
+                , dataType: "json"
+                , data: data.field
+                , headers: {token: localStorage.getItem("token")}
+                , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
+                    //刷新表格
+                    parent.table.reload("test", {})
+                    //关闭窗口
+                    let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index); //再执行关闭
+                }
+            })
+            //避免页面因form的提交而刷新
+            return false;
+        });
+
+    })
+</script>
+</body>
+</html>
