@@ -3,11 +3,31 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
-    <title>reportCustomerCountByRegion</title>
+    <title>reportCustomerAmount</title>
     <link href="./layui/css/layui.css" rel="stylesheet">
 </head>
 <body>
+<form class="layui-form" lay-filter="addCustomerForm">
+    <input name="salId" type="hidden">
+    <div class="layui-form-item"><label class="layui-form-label">用户名称</label>
+        <div class="layui-input-block">
+            <input autocomplete="off" class="layui-input" name="devDesc" placeholder="请输入用户名称" type="text">
+        </div>
+    </div>
 
+    <div class="layui-inline"><label class="layui-form-label">选择年份</label>
+        <div class="layui-input-inline">
+            <input class="layui-input" id="test1" name="devDate" placeholder="请选择年份" type="text">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-filter="submitDevPlanAdd" lay-submit="" type="submit">查询</button>
+            <button class="layui-btn layui-btn-primary" type="reset">重置</button>
+        </div>
+    </div>
+</form>
 <div id="main" style="width: 800px;height:400px;"></div>
 
 <script src="./layui/layui.js"></script>
@@ -22,11 +42,11 @@
         // 指定图表的配置项和数据
         var option = {
             title: {
-                text: '按地区统计客户数量'//统计图的标题
+                text: '客户贡献分析'//统计图的标题
             },
             tooltip: {},//鼠标放在柱子上提示，没有设置表示用默认提示
             legend: {
-                data: ['人数']//图例，每一种颜色柱子代表的意义
+                data: ['金额']//图例，每一种颜色柱子代表的意义
             },
             xAxis: {
                 data: []//横坐标上的商品类型
@@ -35,7 +55,7 @@
             yAxis: {},//纵坐标上的刻度，没有设置就按默认方式标注刻度
             series: [
                 {
-                    name: '人数',//与图例对应
+                    name: '金额',//与图例对应
                     type: 'bar',//统计图类型：bar-柱状图，line-折线图，pie-饼图
                     data: []//每根柱子的数值
                 }
@@ -47,8 +67,7 @@
 
         $.ajax({
             type: "get",
-            url: "http://localhost:8080/report/getCustomerCountByRegion",
-             headers: {token: localStorage.getItem("token")},
+            url: "http://localhost:8080/report/getAmountByReCusID",
             dataType: "json",
             success: function (obj) {
                 myChart.setOption({
@@ -57,7 +76,7 @@
                     },
                     series: [
                         {
-                            name: '人数',//与图例对应
+                            name: '金额',//与图例对应
                             type: 'bar',//统计图类型：bar-柱状图，line-折线图，pie-饼图
                             data: obj.values//每根柱子的数值
                         }
