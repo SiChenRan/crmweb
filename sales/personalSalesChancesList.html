@@ -232,38 +232,42 @@
         });
         table.on('tool(test)', function (obj) {
             var data = obj.data;
-            //console.log(obj)
-            if (obj.event === 'success') {
-                layer.confirm('客户开发确定成功吗？', function (index) {
-                    $.ajax({
-                        type: "post"
-                        , url: "http://localhost:8080/saleChance/devSuccess"
-                        , dataType: "json"
-                        , data: data
-                        , headers: {token: localStorage.getItem("token")}
-                        , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
-                            table.reload("test", {})
-                        }
-                    })
-                    window.location.href="../customer/customerlist.html"
-                    layer.msg("请及时在客户信息管理模块更新客户信息")
-                    layer.close(index);
-                });
-            } else if (obj.event === 'failure') {
-                layer.confirm('确定要终止开发吗？', function (index) {
-                    $.ajax({
-                        type: "post"
-                        , url: "http://localhost:8080/saleChance/devFailure"
-                        , dataType: "json"
-                        , data: data
-                        , headers: {token: localStorage.getItem("token")}
-                        , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
-                            table.reload("test", {})
-                        }
-                    })
-                    layer.close(index);
-                    layer.msg("已确认终止该客户的开发")
-                });
+            if (data.salState !== "已分配") {
+                layer.msg("该客户已成功开发或终止开发！")
+            } else {
+                //console.log(obj)
+                if (obj.event === 'success') {
+                    layer.confirm('客户开发确定成功吗？', function (index) {
+                        $.ajax({
+                            type: "post"
+                            , url: "http://localhost:8080/saleChance/devSuccess"
+                            , dataType: "json"
+                            , data: data
+                            , headers: {token: localStorage.getItem("token")}
+                            , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
+                                table.reload("test", {})
+                            }
+                        })
+                        window.location.href = "../customer/customerlist.html"
+                        layer.msg("请及时在客户信息管理模块更新客户信息")
+                        layer.close(index);
+                    });
+                } else if (obj.event === 'failure') {
+                    layer.confirm('确定要终止开发吗？', function (index) {
+                        $.ajax({
+                            type: "post"
+                            , url: "http://localhost:8080/saleChance/devFailure"
+                            , dataType: "json"
+                            , data: data
+                            , headers: {token: localStorage.getItem("token")}
+                            , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
+                                table.reload("test", {})
+                            }
+                        })
+                        layer.close(index);
+                        layer.msg("已确认终止该客户的开发")
+                    });
+                }
             }
         });
     })
