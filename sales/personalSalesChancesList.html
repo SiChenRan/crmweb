@@ -249,8 +249,8 @@
                             }
                         })
                         window.location.href = "../customer/customerlist.html"
-                        layer.msg("请及时在客户信息管理模块更新客户信息")
                         layer.close(index);
+                        layer.msg("请及时在客户信息管理模块更新客户信息")
                     });
                 } else if (obj.event === 'failure') {
                     layer.confirm('确定要终止开发吗？', function (index) {
