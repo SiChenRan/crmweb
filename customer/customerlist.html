@@ -16,6 +16,7 @@
         <button class="layui-btn layui-btn-sm" lay-event="addCus">新增</button>
         <button class="layui-btn layui-btn-sm" lay-event="edit">修改</button>
         <button class="layui-btn layui-btn-sm" lay-event="contact" style="background-color: #1e9fff">查看联系人</button>
+        <button class="layui-btn layui-btn-sm" lay-event="businessrecord" style="background-color: #1e9fff">查看客户交往记录</button>
         <button class="layui-btn layui-btn-sm" lay-event="deleteCus" style="background-color: red">删除</button>
     </div>
 </script>
@@ -160,6 +161,16 @@
                         layer.msg("一次只能查看一个客户")
                     } else {
                         window.location.href = '../contact/contactlist.html?cusId=' + data[0].cusId
+                    }
+                    break;
+
+                case 'businessrecord':
+                    if (data.length == 0) {
+                        layer.msg("请选择要查看的行")
+                    } else if (data.length > 1) {
+                        layer.msg("一次只能查看一个客户")
+                    } else {
+                        window.location.href = '../businessRecord/businessRecordList.html?cusId=' + data[0].cusId
                     }
                     break;
             }

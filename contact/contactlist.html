@@ -72,7 +72,7 @@
         //头工具栏事件
         table.on('toolbar(test)', function (obj) {
             if (addCusId === undefined) {
-                layer.msg("请到具体的客户联系人界面进行操作！")
+                layer.msg("当前页面仅显示所有客户的联系人，若需继续操作请通过客户信息模块进入！")
             } else {
                 var checkStatus = table.checkStatus(obj.config.id);
                 switch (obj.event) {
