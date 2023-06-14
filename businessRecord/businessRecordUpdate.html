@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>更新客户交往记录</title>
+    <link rel="stylesheet" href="../../layui/css/layui.css" media="all">
+</head>
+<body>
+<div style="margin: 15px">
+    <form class="layui-form" lay-filter="updateBusinessRecordForm">
+        <input name="recId" type="hidden">
+        <div class="layui-inline"><label class="layui-form-label">日期</label>
+            <div class="layui-input-inline">
+                <input type="text" name="recDate" class="layui-input" id="test5" placeholder="yyyy-MM-dd">
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label">地点</label>
+            <div class="layui-input-block">
+                <input type="text" name="recLoc" autocomplete="off" placeholder="请输入客户交往地点"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label">概要</label>
+            <div class="layui-input-block">
+                <input type="text" name="recSummary" autocomplete="off" placeholder="请输入客户交往概要"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label">详细信息</label>
+            <div class="layui-input-block">
+                <input type="text" name="recDetail" autocomplete="off" placeholder="请输入客户交往详细信息"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label">销售员姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="salesmanName" autocomplete="off" placeholder="请输入销售员姓名"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="submitBusinessRecordUpdate">立即提交
+                </button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="../../layui/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'laydate', 'jquery'], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+
+        let layDate = layui.laydate;
+
+        //日期时间选择器
+        layDate.render({
+            elem: '#test5'
+            , type: 'date'
+            , value: new Date()
+            , isInitValue: true //是否允许填充初始值，默认为 true
+        });
+        //给表单填充内容
+        //parent是父页面
+        form.val('updateBusinessRecordForm', parent.row);
+        //监听提交
+        form.on('submit(submitBusinessRecordUpdate)', function (data) {
+            //异步(ajax)提交代码
+            $.ajax({
+                type: "post"
+                , url: "http://localhost:8080/businessRecord/updateBusinessRecord"
+                , dataType: "json"
+                , data: data.field
+                , headers: {
+                    token: localStorage.getItem("token")
+                }
+                , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数就是后台返回的内容
+                    //刷新表格
+                    parent.table.reload('test');
+                    //关闭窗口
+                    let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index); //再执行关闭
+                }
+            })
+            return false;//避免页面因form的提交而刷新
+        });
+
+    })
+</script>
+</body>
+</body>
+</html>
