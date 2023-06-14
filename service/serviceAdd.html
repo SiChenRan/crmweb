@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新增服务信息</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+</head>
+<body>
+<div style="margin: 15px">
+    <form class="layui-form" lay-filter="AddServiceForm">
+        <div class="layui-form-item"><label class="layui-form-label">服务类型</label>
+            <div class="layui-input-block">
+                <select name="serType">
+                    <option value=""></option>
+                    <option value="咨询">咨询</option>
+                    <option value="投诉">投诉</option>
+                    <option value="建议">建议</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label">服务概要</label>
+            <div class="layui-input-block">
+                <input type="text" name="serSummary" autocomplete="off" placeholder="请输入服务概要"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label">详细要求</label>
+            <div class="layui-input-block">
+                <input type="text" name="serDetail" autocomplete="off" placeholder="请输入服务详细要求"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label">客户编号</label>
+            <div class="layui-input-block">
+                <select name="cusId" id="cusId" lay-verify="required" lay-search="">
+                    <option value="">直接选择或搜索选择</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label">创建人</label>
+            <div class="layui-input-block">
+                <input type="text" name="serCreator" id="serCreator" autocomplete="off" placeholder="请输入创建人" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline"><label class="layui-form-label">创建时间</label>
+            <div class="layui-input-inline">
+                <input type="text" name="serCreateTime" class="layui-input" id="test5"
+                       placeholder="yyyy-MM-dd HH:mm:ss">
+            </div>
+        </div>
+
+        <div class="layui-form-item" style="margin-top: 15px">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="submitServiceAdd">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="../layui/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'laydate', 'jquery'], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+        let layDate = layui.laydate;
+
+
+        $("#serCreator").val(localStorage.getItem("suName"));
+
+        $.ajax({
+            type: "get",
+            url: "http://localhost:8080/customer/getCustomerList",
+            headers: {
+            token: localStorage.getItem("token")
+        },
+            dataType: "json",
+            success: function (obj) { //后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
+                for (let i = 0; i < obj.data.length; i++) {
+                    $("#cusId").append('<option value="' + obj.data[i].cusId + '">' + obj.data[i].cusId + '</option>')
+                }
+                form.render();  //解决动态改变的标签没生效的问题
+            }
+        })
+
+        //日期时间选择器
+        layDate.render({
+            elem: '#test5'
+            , type: 'datetime'
+            , value: new Date()
+            , isInitValue: true //是否允许填充初始值，默认为 true
+        });
+        //监听提交
+        form.on('submit(submitServiceAdd)', function (data) {
+            //异步(ajax)提交代码
+            $.ajax({
+                type: "post"
+                , url: "http://localhost:8080/services/addService"
+                , dataType: "json"
+                , headers: {
+                    token: localStorage.getItem("token")
+                }
+                , data: data.field
+                , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数就是后台返回的内容
+                    //刷新表格
+                    parent.table.reload('test');
+                    //关闭窗口
+                    let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index); //再执行关闭
+                }
+            })
+            return false;//避免页面因form的提交而刷新
+        });
+
+    })
+</script>
+</body>
+</html>

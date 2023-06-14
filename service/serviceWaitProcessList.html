@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>待处理服务列表</title>
+    <link rel="stylesheet" href="../layui/css/layui.css" media="all">
+</head>
+<body>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="process">处理</button>
+    </div>
+</script>
+<script src="../layui/layui.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述 JS 路径需要改成你本地的 -->
+<script>
+    //弹出窗口要填充数据的变量
+    var row = null;
+    var table = null;
+    var param;
+    layui.use(['table', 'jquery'], function () {
+        table = layui.table;
+        var $ = layui.jquery;
+        //获取客户编号的参数
+        var suName = localStorage.getItem("suName");
+        param = "?suName=" + suName;
+        table.render({
+            elem: '#test'
+            , url: 'http://localhost:8080/services/getWaitProcessList' + param
+            , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            , page: true//开启分页
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: ['filter', 'exports'] //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+            , title: '服务信息表'
+            , headers: {
+                token: localStorage.getItem("token")
+            }
+            , cols: [[
+                {type: 'checkbox'}
+                , {field: 'serId', title: '服务编号', align: 'center', sort: true}
+                , {field: 'serType', title: '类型', align: 'center', sort: true}
+                , {field: 'serSummary', title: '概要', sort: true, align: 'center'}
+                , {field: 'serDetail', title: '详细要求', align: 'center'}
+                , {field: 'cusId', title: '客户编号', sort: true, align: 'center'}
+                , {field: 'serCreator', title: '创建人', align: 'center'}
+                , {field: 'serCreateTime', title: '创建时间', minWidth: 100, align: 'center'} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                , {field: 'serState', title: '状态', sort: true, align: 'center'}
+                , {field: 'serAllocTime', title: '分配时间', sort: true, align: 'center'}
+                , {field: 'serHandler', title: '处理人', sort: true, align: 'center'}
+                , {field: 'serProcessMethod', title: '处理方法', sort: true, align: 'center'}
+                , {field: 'serProcessTime', title: '处理时间', sort: true, align: 'center'}
+                , {field: 'serCusFeedback', title: '客户反馈', sort: true, align: 'center'}
+                , {
+                    field: 'serCusRate', title: '客户满意度', sort: true, align: 'center', templet: function (d) {
+                        let ret = "";
+                        switch (d.serCusRate) {
+                            case 1:
+                                ret = "一星"
+                                break;
+                            case 2:
+                                ret = "二星"
+                                break;
+                            case 3:
+                                ret = "三星"
+                                break;
+                            case 4:
+                                ret = "四星"
+                                break;
+                            case 5:
+                                ret = "五星"
+                                break;
+                        }
+                        return ret;
+                    }
+                }
+                , {field: 'serFeedbackTime', title: '反馈时间', sort: true, align: 'center'}
+            ]]
+        });
+        //头工具栏事件
+        table.on('toolbar(test)', function (obj) {
+            let checkStatus = table.checkStatus(obj.config.id);
+            var data = checkStatus.data;
+            switch (obj.event) {
+                case 'process':
+                    //选中行的数据的数组
+                    if (data.length === 0) {
+                        layer.msg("请选择要处理的服务");
+                    } else if (data.length > 1) {
+                        layer.msg("一次只能处理一项服务");
+                    } else {
+                        row = data[0];//把选中的行对象的值赋给row变量
+                        //弹出窗口
+                        layer.open({
+                            type: 2 //此处以iframe举例
+                            ,
+                            title: '服务处理'
+                            ,
+                            area: ['390px', '450px']
+                            ,
+                            shade: 0.15//背景透明度，取值范围:0-1
+                            ,
+                            maxmin: true//是否允许窗口最大化和最小化
+                            ,
+                            offset: [ //居中显示
+                                ($(window).height() - 450) / 2
+                                , ($(window).width() - 390) / 2
+                            ]
+                            ,
+                            content: 'serviceProcess.html'//弹出窗口的内容
+                        });
+                    }
+                    break;
+            }
+        });
+    });
+</script>
+</body>
+</html>

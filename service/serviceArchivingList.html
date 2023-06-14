@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>归档服务查询</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../layui/css/layui.css" media="all">
+</head>
+<body>
+<div class="selectTable">
+    <form class="layui-form" action="">
+        <div class="layui-inline">
+            <label class="layui-form-label">服务类型</label>
+            <div class="layui-input-inline">
+                <select name="selectType" id="selectType" lay-verify="required" lay-search="">
+                    <option value="">直接选择或搜索选择</option>
+                    <option value="咨询">咨询</option>
+                    <option value="投诉">投诉</option>
+                    <option value="建议">建议</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">处理人</label>
+            <div class="layui-input-inline">
+                <select name="selectHandler" id="selectHandler" lay-verify="required" lay-search="">
+                    <option value="">直接选择或搜索选择</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-input-inline" style="margin-left: 15px">
+                <!-- 这里要加type=button否则会发送两次请求导致搜索无效-->
+                <button type="button" class="layui-btn" id='selectBtn' data-type="reload">搜索</button>
+            </div>
+        </div>
+    </form>
+</div>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+<script src="../layui/layui.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述 JS 路径需要改成你本地的 -->
+
+<script>
+    //弹出窗口要填充数据的变量
+    var table = null;
+
+    layui.use(['table', 'form', 'jquery'], function () {
+        let form = layui.form;
+        table = layui.table;
+        var $ = layui.jquery;
+
+        $.ajax({
+            type: "get",
+            url: "http://localhost:8080/sysUser/getSalesList",
+            headers: {
+            token: localStorage.getItem("token")},
+            dataType: "json",
+            success: function (obj) { //后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
+                for (let i = 0; i < obj.data.length; i++) {
+                    $("#selectHandler").append('<option value="' + obj.data[i].suName + '">' + obj.data[i].suName + '</option>')
+                }
+                form.render();  //解决动态改变的标签没生效的问题
+            }
+        })
+
+        table.render({
+            elem: '#test'
+            , url: 'http://localhost:8080/services/getArchivingServicesList'
+            , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            , page: true//开启分页
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: ['filter', 'exports'] //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+            , title: '服务信息表'
+            , id: 'tableReload'
+            , headers: {
+                token: localStorage.getItem("token")
+            }
+            , cols: [[
+                {type: 'checkbox'}
+                , {field: 'serId', title: '服务编号', align: 'center', sort: true}
+                , {field: 'serType', title: '类型', align: 'center', sort: true}
+                , {field: 'serSummary', title: '概要', sort: true, align: 'center'}
+                , {field: 'serDetail', title: '详细要求', align: 'center'}
+                , {field: 'cusId', title: '客户编号', sort: true, align: 'center'}
+                , {field: 'serCreator', title: '创建人', align: 'center'}
+                , {field: 'serCreateTime', title: '创建时间', minWidth: 100, align: 'center'} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                , {field: 'serState', title: '状态', sort: true, align: 'center'}
+                , {field: 'serAllocTime', title: '分配时间', sort: true, align: 'center'}
+                , {field: 'serHandler', title: '处理人', sort: true, align: 'center'}
+                , {field: 'serProcessMethod', title: '处理方法', sort: true, align: 'center'}
+                , {field: 'serProcessTime', title: '处理时间', sort: true, align: 'center'}
+                , {field: 'serCusFeedback', title: '客户反馈', sort: true, align: 'center'}
+                , {
+                    field: 'serCusRate', title: '客户满意度', sort: true, align: 'center', templet: function (d) {
+                        let ret = "";
+                        switch (d.serCusRate) {
+                            case 1:
+                                ret = "一星"
+                                break;
+                            case 2:
+                                ret = "二星"
+                                break;
+                            case 3:
+                                ret = "三星"
+                                break;
+                            case 4:
+                                ret = "四星"
+                                break;
+                            case 5:
+                                ret = "五星"
+                                break;
+                        }
+                        return ret;
+                    }
+                }
+                , {field: 'serFeedbackTime', title: '反馈时间', sort: true, align: 'center'}
+            ]]
+        });
+        var active = {
+            reload: function () {
+                var selectType = $('#selectType');
+                var selectHandler = $('#selectHandler');
+                //执行重载
+                table.reload('tableReload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    , where: {
+                            serHandler: selectHandler.val()
+                            , serType: selectType.val()
+                    }
+
+                });
+            }
+        };
+
+        $('#selectBtn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+
+</script>
+</body>
+</html>
