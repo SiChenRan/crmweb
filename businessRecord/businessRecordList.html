@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>客户交往记录表</title>
+    <link rel="stylesheet" href="../layui/css/layui.css" media="all">
+</head>
+<body>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+        <button class="layui-btn layui-btn-sm" lay-event="edit">修改</button>
+<!--        <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>-->
+        <button class="layui-btn layui-btn-sm" lay-event="delete" style="background-color: red">删除</button>
+    </div>
+</script>
+<script src="../layui/layui.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述 JS 路径需要改成你本地的 -->
+
+<script>
+    //弹出窗口要填充数据的变量
+    var row = null;
+    var table = null;
+    var param;
+    layui.use(['table', 'jquery'], function () {
+        table = layui.table;
+        var $ = layui.jquery;
+
+        //获取客户编号的参数
+        var url = window.location.href; //得到一个http链接
+        var arr = url.split("?");
+        param = "";
+        if (arr.length > 1) {
+            param = "?" + arr[1];
+        }
+
+        table.render({
+            elem: '#test'
+            , url: 'http://localhost:8080/businessRecord/getBusinessRecordList' + param //带上客户编号的参数
+            , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            , page: true//开启分页
+            , headers: {
+                token: localStorage.getItem("token")
+            }
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: ['filter', 'exports'] //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+            , title: '联系人信息表'
+            , cols: [[
+                {type: 'checkbox'}
+                , {field: 'recId', title: '编号', align: 'center', sort: true}
+                , {field: 'recDate', title: '日期', align: 'center'}
+                , {field: 'recLoc', title: '地点', sort: true, align: 'center'}
+                , {field: 'recSummary', title: '概要', align: 'center'}
+                , {field: 'recDetail', title: '详细信息', minWidth: 100, align: 'center'} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                , {field: 'cusId', title: '客户编号', sort: true, align: 'center'}
+                , {field: 'salesmanName', title: '销售员姓名', sort: true, align: 'center'}
+            ]]
+        });
+        //头工具栏事件
+        table.on('toolbar(test)', function (obj) {
+            let checkStatus = table.checkStatus(obj.config.id);
+            var data = checkStatus.data;
+            switch (obj.event) {
+                case 'edit':
+                    if (param === "") {
+                        layer.msg("当前页面仅显示客户交往记录，若需继续操作请通过客户信息模块进入");
+
+                    } else {
+                        //选中行的数据的数组
+                        if (data.length === 0) {
+                            layer.msg("请选择要修改的行");
+                        } else if (data.length > 1) {
+                            layer.msg("一次只能修改一行数据");
+                        } else {
+                            row = data[0];//把选中的行对象的值赋给row变量
+                            //弹出窗口
+                            layer.open({
+                                type: 2 //此处以iframe举例
+                                ,
+                                title: '修改客户交往记录'
+                                ,
+                                area: ['390px', '450px']
+                                ,
+                                shade: 0.15//背景透明度，取值范围:0-1
+                                ,
+                                maxmin: true//是否允许窗口最大化和最小化
+                                ,
+                                offset: [ //居中显示
+                                    ($(window).height() - 450) / 2
+                                    , ($(window).width() - 390) / 2
+                                ]
+                                ,
+                                content: 'businessRecordUpdate.html'//弹出窗口的内容
+                            });
+                        }
+                    }
+                    break;
+                case 'add':
+                    if (param === "") {
+                        layer.msg("当前页面仅显示客户交往记录，若需继续操作请通过客户信息模块进入");
+
+                    } else {
+                        //弹出窗口
+                        layer.open({
+                            type: 2 //此处以iframe举例
+                            ,
+                            title: '新增客户交往记录'
+                            ,
+                            area: ['390px', '450px']
+                            ,
+                            shade: 0.15//背景透明度，取值范围:0-1
+                            ,
+                            maxmin: true//是否允许窗口最大化和最小化
+                            ,
+                            offset: [ //居中显示
+                                ($(window).height() - 450) / 2
+                                , ($(window).width() - 390) / 2
+                            ]
+                            ,
+                            content: 'businessRecordAdd.html'//弹出窗口的内容
+                        });
+                    }
+                    break;
+                case 'delete':
+                    if (param === "") {
+                        layer.msg("当前页面仅显示客户交往记录，若需继续操作请通过客户信息模块进入");
+
+                    } else {
+                        if (data.length < 1) {
+                            layer.msg("请选择要删除的行");
+                        } else {
+                            layer.confirm('确认要删除选中的行吗?', function (index) {
+                                //把选中行的cusId保存到数组
+                                var arr = [];
+                                for (let i = 0; i < data.length; i++) {
+                                    let recId = data[i].recId;
+                                    arr.push(recId);
+                                }
+                                $.ajax({
+                                    type: "post"
+                                    , url: "http://localhost:8080/businessRecord/deleteBusinessRecord"
+                                    , dataType: "json"
+                                    , headers: {
+                                        token: localStorage.getItem("token")
+                                    }
+                                    , data: {
+                                        ids: arr.join(",")//用数组的join方法把数组元素用逗号(',')拼接成字符串结果如:"1,2,3"
+                                    }
+                                    , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数就是后台返回的内容
+                                        //刷新表格
+                                        table.reload('test');
+                                    }
+                                })
+                                layer.close(index);
+                            });
+                        }
+                    }
+            }
+        });
+    });
+</script>
+</body>
+</html>

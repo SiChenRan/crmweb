@@ -33,6 +33,7 @@
     console.log(param)
 
     var addCusId = url.split('=')[1]//获取当前查看联系人的用户编号cusId
+    console.log(addCusId)
 
 
     layui.use(['table', 'jquery'], function () {
@@ -70,21 +71,39 @@
 
         //头工具栏事件
         table.on('toolbar(test)', function (obj) {
-            var checkStatus = table.checkStatus(obj.config.id);
-            switch (obj.event) {
-                case 'editCon':
-                    //选中行的数据的数组
-                    var data = checkStatus.data;
-                    if (data.length == 0) {
-                        layer.msg("请选择要修改的行")
-                    } else if (data.length > 1) {
-                        layer.msg("一次只能修改一行数据")
-                    } else {
-                        row = data[0]  //把选中行对象赋给row变量
-                        //弹出窗口
+            if (addCusId === undefined) {
+                layer.msg("当前页面仅显示所有客户的联系人，若需继续操作请通过客户信息模块进入！")
+            } else {
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch (obj.event) {
+                    case 'editCon':
+                        //选中行的数据的数组
+                        var data = checkStatus.data;
+                        if (data.length == 0) {
+                            layer.msg("请选择要修改的行")
+                        } else if (data.length > 1) {
+                            layer.msg("一次只能修改一行数据")
+                        } else {
+                            row = data[0]  //把选中行对象赋给row变量
+                            //弹出窗口
+                            layer.open({
+                                type: 2 //此处以iframe举例
+                                , title: '修改联系人信息'
+                                , area: ['390px', '450px']
+                                , shade: 0.3   //背景透明度，取值范围0~1
+                                , maxmin: true  //窗口是否允许最大化和最小化
+                                , offset: [ //居中显示
+                                    ($(window).height() - 450) / 2
+                                    , ($(window).width() - 390) / 2
+                                ]
+                                , content: 'contactupdate.html' //弹出窗口的页面内容
+                            });
+                        }
+                        break;
+                    case 'addCon':
                         layer.open({
                             type: 2 //此处以iframe举例
-                            , title: '修改联系人信息'
+                            , title: '新增联系人信息'
                             , area: ['390px', '450px']
                             , shade: 0.3   //背景透明度，取值范围0~1
                             , maxmin: true  //窗口是否允许最大化和最小化
@@ -92,55 +111,41 @@
                                 ($(window).height() - 450) / 2
                                 , ($(window).width() - 390) / 2
                             ]
-                            , content: 'contactupdate.html' //弹出窗口的页面内容
+                            , content: 'contactadd.html' //弹出窗口的页面内容
                         });
-                    }
-                    break;
-                case 'addCon':
-                    layer.open({
-                        type: 2 //此处以iframe举例
-                        , title: '新增联系人信息'
-                        , area: ['390px', '450px']
-                        , shade: 0.3   //背景透明度，取值范围0~1
-                        , maxmin: true  //窗口是否允许最大化和最小化
-                        , offset: [ //居中显示
-                            ($(window).height() - 450) / 2
-                            , ($(window).width() - 390) / 2
-                        ]
-                        , content: 'contactadd.html' //弹出窗口的页面内容
-                    });
-                    break;
-                case 'deleteCon':
-                    $
-                    var data1 = checkStatus.data;
-                    if (data1.length == 0) {
-                        layer.msg("请选择要删除的行")
-                    } else {
-                        layer.confirm('确定要删除选中的联系人吗？', function (index) {
-                            //把选中数据的id保存为一个数组，用于提交给后台
+                        break;
+                    case 'deleteCon':
+                        $
+                        var data1 = checkStatus.data;
+                        if (data1.length == 0) {
+                            layer.msg("请选择要删除的行")
+                        } else {
+                            layer.confirm('确定要删除选中的联系人吗？', function (index) {
+                                //把选中数据的id保存为一个数组，用于提交给后台
 
-                            let arr = []
-                            for (let i = 0; i < data1.length; i++) {
-                                let cusIds = data1[i].conId
-                                arr.push(cusIds)
-                            }
-                            //do something
-                            $.ajax({
-                                type: "post"
-                                , url: "http://localhost:8080/contact/deleteContact"
-                                , dataType: "json"
-                                , data: {
-                                    ids: arr.join(",")//使用join方法把数组元素用","拼接为字符串，结果如“1，3，5”
+                                let arr = []
+                                for (let i = 0; i < data1.length; i++) {
+                                    let cusIds = data1[i].conId
+                                    arr.push(cusIds)
                                 }
-                                , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
-                                    //刷新表格
-                                    table.reload("test", {})
-                                }
-                            })
-                            layer.close(index);
-                        });
-                    }
-                    break;
+                                //do something
+                                $.ajax({
+                                    type: "post"
+                                    , url: "http://localhost:8080/contact/deleteContact"
+                                    , dataType: "json"
+                                    , data: {
+                                        ids: arr.join(",")//使用join方法把数组元素用","拼接为字符串，结果如“1，3，5”
+                                    }
+                                    , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
+                                        //刷新表格
+                                        table.reload("test", {})
+                                    }
+                                })
+                                layer.close(index);
+                            });
+                        }
+                        break;
+                }
             }
         });
 

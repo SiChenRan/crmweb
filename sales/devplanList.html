@@ -62,106 +62,111 @@
 
         //头工具栏事件
         table.on('toolbar(test)', function (obj) {
-            var checkStatus = table.checkStatus(obj.config.id);
-            var data = checkStatus.data;
-            switch (obj.event) {
-                case 'editDevPlan':
-                    //选中行的数据的数组
-                    if (data.length == 0) {
-                        layer.msg("请选择要修改的开发计划")
-                    } else if (data.length > 1) {
-                        layer.msg("一次只能修改一个开发计划")
-                    } else {
-                        row = data[0]  //把选中行对象赋给row变量
-                        //弹出窗口
-                        layer.open({
-                            type: 2 //此处以iframe举例
-                            , title: '修改开发计划'
-                            , area: ['390px', '450px']
-                            , shade: 0.3   //背景透明度，取值范围0~1
-                            , maxmin: true  //窗口是否允许最大化和最小化
-                            , offset: [ //居中显示
-                                ($(window).height() - 450) / 2
-                                , ($(window).width() - 390) / 2
-                            ]
-                            , content: 'devplanupdate.html' //弹出窗口的页面内容
-                        });
-                    }
-                    break;
-                case 'addDevPlan':
-                    if (data.length > 0) {
-                        layer.msg("新增计划不允许勾选已有的计划")
-                    } else {
-                        //弹出窗口
-                        layer.open({
-                            type: 2 //此处以iframe举例
-                            , title: '新增客户开发计划'
-                            , area: ['390px', '450px']
-                            , shade: 0.3   //背景透明度，取值范围0~1
-                            , maxmin: true  //窗口是否允许最大化和最小化
-                            , offset: [ //居中显示
-                                ($(window).height() - 450) / 2
-                                , ($(window).width() - 390) / 2
-                            ]
-                            , content: 'devplanadd.html' //弹出窗口的页面内容
-                        });
-                    }
-                    break;
-                case 'deleteDevPlan':
-                    $
-                    var data1 = checkStatus.data;
-                    if (data1.length == 0) {
-                        layer.msg("请选择要删除的开发计划")
-                    } else {
-                        layer.confirm('确定要删除选中的用户吗？', function (index) {
-                            //把选中数据的id保存为一个数组，用于提交给后台
+            if (addSalId===undefined){
+                layer.msg("当前页面仅显示所有开发计划的信息，若需继续操作请通过我的销售机会模块进入！")
+            }
+            else {
+                var checkStatus = table.checkStatus(obj.config.id);
+                var data = checkStatus.data;
+                switch (obj.event) {
+                    case 'editDevPlan':
+                        //选中行的数据的数组
+                        if (data.length == 0) {
+                            layer.msg("请选择要修改的开发计划")
+                        } else if (data.length > 1) {
+                            layer.msg("一次只能修改一个开发计划")
+                        } else {
+                            row = data[0]  //把选中行对象赋给row变量
+                            //弹出窗口
+                            layer.open({
+                                type: 2 //此处以iframe举例
+                                , title: '修改开发计划'
+                                , area: ['390px', '450px']
+                                , shade: 0.3   //背景透明度，取值范围0~1
+                                , maxmin: true  //窗口是否允许最大化和最小化
+                                , offset: [ //居中显示
+                                    ($(window).height() - 450) / 2
+                                    , ($(window).width() - 390) / 2
+                                ]
+                                , content: 'devplanupdate.html' //弹出窗口的页面内容
+                            });
+                        }
+                        break;
+                    case 'addDevPlan':
+                        if (data.length > 0) {
+                            layer.msg("新增计划不允许勾选已有的计划")
+                        } else {
+                            //弹出窗口
+                            layer.open({
+                                type: 2 //此处以iframe举例
+                                , title: '新增客户开发计划'
+                                , area: ['390px', '450px']
+                                , shade: 0.3   //背景透明度，取值范围0~1
+                                , maxmin: true  //窗口是否允许最大化和最小化
+                                , offset: [ //居中显示
+                                    ($(window).height() - 450) / 2
+                                    , ($(window).width() - 390) / 2
+                                ]
+                                , content: 'devplanadd.html' //弹出窗口的页面内容
+                            });
+                        }
+                        break;
+                    case 'deleteDevPlan':
+                        $
+                        var data1 = checkStatus.data;
+                        if (data1.length == 0) {
+                            layer.msg("请选择要删除的开发计划")
+                        } else {
+                            layer.confirm('确定要删除选中的用户吗？', function (index) {
+                                //把选中数据的id保存为一个数组，用于提交给后台
 
-                            let arr = []
-                            for (let i = 0; i < data1.length; i++) {
-                                let devids = data1[i].devId
-                                arr.push(devids)
-                            }
-                            //do something
-                            $.ajax({
-                                type: "post"
-                                , url: "http://localhost:8080/devPlan/deleteDevPlan"
-                                , dataType: "json"
-                                , headers: {token: localStorage.getItem("token")}
-                                , data: {
-                                    ids: arr.join(",")//使用join方法把数组元素用","拼接为字符串，结果如“1，3，5”
+                                let arr = []
+                                for (let i = 0; i < data1.length; i++) {
+                                    let devids = data1[i].devId
+                                    arr.push(devids)
                                 }
-                                , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
-                                    //刷新表格
-                                    table.reload("test", {})
-                                }
-                            })
-                            layer.close(index);
-                        });
-                    }
-                    break;
-                case 'executionResults':
-                    //选中行的数据的数组
-                    if (data.length == 0) {
-                        layer.msg("请选择要填写执行结果的开发计划")
-                    } else if (data.length > 1) {
-                        layer.msg("一次只能填写一个开发计划")
-                    } else {
-                        row = data[0]  //把选中行对象赋给row变量
-                        //弹出窗口
-                        layer.open({
-                            type: 2 //此处以iframe举例
-                            , title: '填写执行结果'
-                            , area: ['390px', '450px']
-                            , shade: 0.3   //背景透明度，取值范围0~1
-                            , maxmin: true  //窗口是否允许最大化和最小化
-                            , offset: [ //居中显示
-                                ($(window).height() - 450) / 2
-                                , ($(window).width() - 390) / 2
-                            ]
-                            , content: 'devplanexec.html' //弹出窗口的页面内容
-                        });
-                    }
-                    break;
+                                //do something
+                                $.ajax({
+                                    type: "post"
+                                    , url: "http://localhost:8080/devPlan/deleteDevPlan"
+                                    , dataType: "json"
+                                    , headers: {token: localStorage.getItem("token")}
+                                    , data: {
+                                        ids: arr.join(",")//使用join方法把数组元素用","拼接为字符串，结果如“1，3，5”
+                                    }
+                                    , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
+                                        //刷新表格
+                                        table.reload("test", {})
+                                    }
+                                })
+                                layer.close(index);
+                            });
+                        }
+                        break;
+                    case 'executionResults':
+                        //选中行的数据的数组
+                        if (data.length == 0) {
+                            layer.msg("请选择要填写执行结果的开发计划")
+                        } else if (data.length > 1) {
+                            layer.msg("一次只能填写一个开发计划")
+                        } else {
+                            row = data[0]  //把选中行对象赋给row变量
+                            //弹出窗口
+                            layer.open({
+                                type: 2 //此处以iframe举例
+                                , title: '填写执行结果'
+                                , area: ['390px', '450px']
+                                , shade: 0.3   //背景透明度，取值范围0~1
+                                , maxmin: true  //窗口是否允许最大化和最小化
+                                , offset: [ //居中显示
+                                    ($(window).height() - 450) / 2
+                                    , ($(window).width() - 390) / 2
+                                ]
+                                , content: 'devplanexec.html' //弹出窗口的页面内容
+                            });
+                        }
+                        break;
+                }
             }
         })
     })
