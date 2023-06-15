@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+    <title>reportCustomerAmount</title>
+    <link href="./layui/css/layui.css" rel="stylesheet">
+</head>
+<body>
+
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-filter="level" lay-submit="" type="button">客户等级</button>
+            <button class="layui-btn" lay-filter="credit" lay-submit="" type="button">信用度</button>
+
+        </div>
+    </div>
+
+<div id="main" style="width: 800px;height:400px;"></div>
+
+<script src="./layui/layui.js"></script>
+<script src="./js/echarts.js"></script>
+<script>
+    layui.use(['jquery'], function () {
+
+        var $ = layui.jquery;
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '客户构成分析'//统计图的标题
+            },
+            tooltip: {},//鼠标放在柱子上提示，没有设置表示用默认提示
+            legend: {
+                data: ['人数']//图例，每一种颜色柱子代表的意义
+            },
+            xAxis: {
+                data: []//横坐标上的商品类型
+            },
+            // color: ['lightblue'],
+            yAxis: {},//纵坐标上的刻度，没有设置就按默认方式标注刻度
+            series: [
+                {
+                    name: '人数',//与图例对应
+                    type: 'bar',//统计图类型：bar-柱状图，line-折线图，pie-饼图
+                    data: []//每根柱子的数值
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+//         $.ajax({
+//             type: "get",
+//             url: "http://localhost:8080/report/getAmountByReCusID",
+//             dataType: "json",
+//             success: function (obj) {
+//                 myChart.setOption({
+//                     xAxis: {
+//                         data: obj.items//横坐标上的商品类型
+//                     },
+//                     series: [
+//                         {
+//                             name: '金额',//与图例对应
+//                             type: 'bar',//统计图类型：bar-柱状图，line-折线图，pie-饼图
+//                             data: obj.values//每根柱子的数值
+//                         }
+//                     ]
+//                 })
+//             }
+//         })
+
+
+        // 查询按钮点击事件处理
+        $('.layui-btn[lay-filter="level"]').on('click', function () {
+
+                // 发送 AJAX 请求，查询该用户名的值，并显示图像
+                $.ajax({
+                    type: "get",
+                    url: "http://localhost:8080/report/getCustomerCountByIndustry", // 替换为根据用户名查询值的接口 URL
+
+                    dataType: "json",
+                    success: function (data) {
+                        // 更新图表数据，并重新渲染图表
+                        myChart.setOption({
+                            xAxis: { data: data.items },
+                            series: [{ data: data.values }]
+                        });
+                    }
+                });
+
+
+        });// 查询按钮点击事件处理
+        $('.layui-btn[lay-filter="credit"]').on('click', function () {
+
+            // 发送 AJAX 请求，查询该用户名的值，并显示图像
+            $.ajax({
+                type: "get",
+                url: "http://localhost:8080/report/getCustomerCountByCredit", // 替换为根据用户名查询值的接口 URL
+
+                dataType: "json",
+                success: function (data) {
+                    // 更新图表数据，并重新渲染图表
+                    myChart.setOption({
+                        xAxis: { data: data.items },
+                        series: [{ data: data.values }]
+                    });
+                }
+            });
+
+
+        });
+
+        // 页面加载完成后，查询所有用户名并显示初始图表
+        $.ajax({
+            type: "get",
+            url: "http://localhost:8080/report/getCustomerCountByIndustry", // 替换为获取所有用户名的接口 URL
+            dataType: "json",
+            success: function (data) {
+                myChart.setOption({
+                    xAxis: { data: data.items },
+                    series: [{ data: data.values }]
+                });
+            }
+        });
+
+
+
+
+
+    });
+</script>
+</body>
+</html>
