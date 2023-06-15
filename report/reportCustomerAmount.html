@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
     <title>reportCustomerAmount</title>
-    <link href="./layui/css/layui.css" rel="stylesheet">
+    <link href="../layui/css/layui.css" rel="stylesheet">
 </head>
 <body>
 <form class="layui-form" lay-filter="addCustomerForm">
@@ -16,7 +16,6 @@
     </div>
 
 
-
     <div class="layui-form-item">
         <div class="layui-input-block">
             <button class="layui-btn" lay-filter="queryReport" lay-submit="" type="reset">查询</button>
@@ -26,8 +25,8 @@
 </form>
 <div id="main" style="width: 800px;height:400px;"></div>
 
-<script src="./layui/layui.js"></script>
-<script src="./js/echarts.js"></script>
+<script src="../layui/layui.js"></script>
+<script src="../js/echarts.js"></script>
 <script>
     layui.use(['jquery'], function () {
 
@@ -90,13 +89,14 @@
                 $.ajax({
                     type: "get",
                     url: "http://localhost:8080/report/getAmountByReCusName", // 替换为根据用户名查询值的接口 URL
-                    data: { username: username },
+                    data: {username: username},
+                    headers: {token: localStorage.getItem("token")},
                     dataType: "json",
                     success: function (data) {
                         // 更新图表数据，并重新渲染图表
                         myChart.setOption({
-                            xAxis: { data: data.items },
-                            series: [{ data: data.values }]
+                            xAxis: {data: data.items},
+                            series: [{data: data.values}]
                         });
                     }
                 });

@@ -3,67 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <title>新增用户信息</title>
-    <link rel="stylesheet" href="./layui/css/layui.css">
+    <link rel="stylesheet" href="/layui/css/layui.css">
 </head>
 <body>
 <div style="margin: 15px">
-    <form class="layui-form" lay-filter="updateUserForm">
+    <form class="layui-form" lay-filter="AddUserForm">
 
         <div class="layui-form-item">
-            <label class="layui-form-label">用户名称</label>
+            <label class="layui-form-label">字典类型</label>
             <div class="layui-input-block">
-                <input type="text" name="suName" autocomplete="off" placeholder="请输入用户名称"
+                <input type="text" name="name" autocomplete="off" placeholder="请输入字典名称"
                        class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">用户密码</label>
+            <label class="layui-form-label">字典备注</label>
             <div class="layui-input-block">
-                <input type="text" name="suPwd" autocomplete="off" placeholder="请输入服务概要"
+                <input type="text" name="about" autocomplete="off" placeholder="请输入字典密码"
                        class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">用户角色</label>
-            <div class="layui-input-block">
-                <select name="suRole">
-                    <option value="ADMIN">管理员</option>
-                    <option value="SALES">销售员</option>
-                    <option value="SUPERVISOR">超级管理员</option>
-                </select>
             </div>
         </div>
 
         <div class="layui-form-item" style="margin-top: 15px">
             <div class="layui-input-block">
-                <button type="submit" class="layui-btn" lay-submit="" lay-filter="updateUser">立即提交</button>
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="createUser">立即提交</button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
             </div>
         </div>
     </form>
 </div>
-<script src="./layui/layui.js" charset="utf-8"></script>
+<script src="../layui/layui.js" charset="utf-8"></script>
 <script>
     layui.use(['form', 'laydate', 'jquery'], function () {
         let form = layui.form;
         let $ = layui.jquery;
 
-        //给表单填充内容
-        form.val('updateUserForm', parent.row);
-
-        let suId = parent.row.suId
-
         //监听提交
-        form.on('submit(updateUser)', function (data) {
+        form.on('submit(createUser)', function (data) {
+            console.log(data)
             $.ajax({
                 type: "post"
-                , url: "http://localhost:8080/sysUser/update"
+                , url: "http://localhost:8080/sysDic/create"
                 , dataType: "json"
                 , headers: {
                     ["content-type"]: "application/json",
                     token: localStorage.getItem("token")
                 }
-                , data: JSON.stringify({suId: suId, ...data.field})
+                , data: JSON.stringify(data.field)
                 , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
                     //刷新表格
                     parent.table.reload("test", {})

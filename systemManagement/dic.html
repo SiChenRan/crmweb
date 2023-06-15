@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>用户信息表</title>
-    <link rel="stylesheet" href="./layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../layui/css/layui.css" media="all">
 </head>
 <body>
 <table class="layui-hide" id="test" lay-filter="test"></table>
@@ -14,7 +14,7 @@
         <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del">删除</button>
     </div>
 </script>
-<script src="./layui/layui.js" charset="utf-8"></script>
+<script src="../layui/layui.js" charset="utf-8"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述 JS 路径需要改成你本地的 -->
 
 <script>
@@ -25,33 +25,20 @@
 
         table.render({
             elem: '#test'
-            , url: 'http://localhost:8080/sysUser/list'
+            , url: 'http://localhost:8080/sysDic/list'
             , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
             , page: true//开启分页
             , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
-            , title: '服务信息表'
+            , title: '字典信息表'
             , headers: {
                 token: localStorage.getItem("token")
             }
             , cols: [[
                 {type: 'checkbox'}
-                , {field: 'suId', title: '用户ID', align: 'center', sort: true}
-                , {field: 'suName', title: '用户名', align: 'center', sort: true}
-                , {field: 'suPwd', title: '用户密码', sort: true, align: 'center'}
-                , {
-                    field: 'suRole', title: '用户角色', align: 'center', templet: function (d) {
-                        switch (d.suRole) {
-                            case "ADMIN":
-                                return "管理员"
-                            case "SALES":
-                                return "销售员"
-                            case "EXECUTIVE":
-                                return "执行员"
-                            case "SUPERVISOR":
-                                return "超级管理员"
-                        }
-                    }
-                }
+                , {field: 'id', title: '字典ID', align: 'center', sort: true}
+                , {field: 'name', title: '字典名称', align: 'center', sort: true}
+                , {field: 'about', title: '字典备注', sort: true, align: 'center'}
+                ,
             ]]
         });
         //头工具栏事件
@@ -73,7 +60,7 @@
                                 , ($(window).width() - 390) / 2
                             ]
                             ,
-                            content: 'createUser.html'//弹出窗口的内容
+                            content: 'addDic.html'//弹出窗口的内容
                         });
                         break;
                     case 'update':
@@ -92,7 +79,7 @@
                                     , ($(window).width() - 390) / 2
                                 ]
                                 ,
-                                content: 'updateUser.html'//弹出窗口的内容
+                                content: 'updaeDic.html'//弹出窗口的内容
                             });
                         } else if (data.length === 0) {
                             layer.msg("选中要修改的行")
@@ -105,7 +92,7 @@
                         if (data.length === 1) {
                             $.ajax({
                                 type: "delete"
-                                , url: `http://localhost:8080/sysUser/del?id=${data[0].suId}`
+                                , url: `http://localhost:8080/sysDic/del?id=${data[0].id}`
                                 , headers: {
                                     token: localStorage.getItem("token")
                                 }
