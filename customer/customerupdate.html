@@ -130,12 +130,12 @@
     layui.use(['form', 'jquery'], function () {
         var form = layui.form;
         var $ = layui.jquery;
-
         //给表单填充内容
         form.val('updateCustomerForm', parent.row);
-
+        console.log(parent.row)
         //监听提交
         form.on('submit(submitCustomerUpdate)', function (data) {
+            console.log(data.field)
             //异步（ajax）提交
             $.ajax({
                 type: "post"

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../layui/css/layui.css" media="all">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+
+<body>
+    <table class="layui-hide" id="test"></table>
+    <script src="../layui/layui.js" charset="utf-8"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述 JS 路径需要改成你本地的 -->
+    <script>
+        layui.use(['table', 'jquery'], function () {
+            table = layui.table;
+            var $ = layui.jquery;
+            table.render({
+                elem: '#test'
+                , url: 'http://localhost:8080/orders/getOrdersList'
+                , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , page: true//开启分页
+                , defaultToolbar: ['filter', 'exports'] //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                , title: '服务信息表'
+                , headers: {
+                    token: localStorage.getItem("token")
+                }
+                , cols: [[
+                     { field: 'odrId', title: '订单编号', }
+                    , { field: 'odrTime', title: '日期' }
+                    , { field: 'odrAmount', title: '订单金额' }
+                    , { field: 'odrShipto',title: '订单送货地址' }
+                    , {
+                        field: 'odrStatus', title: '订单状态', width: 95, templet: function (d) {
+                            //在前端将数据库中的状态码，装化为相应的信息
+                            let ret = ''
+                            switch (d.odrStatus) {
+                                case 1:
+                                    ret = '未付款'
+                                    break;
+                                case 2:
+                                    ret = '已付款'
+                                    break;
+                                case 3:
+                                    ret = '已发货'
+                                    break;
+                                case 4:
+                                    ret = '已收货'
+                                    break;
+                                case 5:
+                                    ret = '已退货'
+                                    break;
+                            }
+                            return ret
+                        }
+                    } //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                    , { field: 'cusId', width: 100, title: '客户编号' }
+                ]]
+            });
+        });
+
+    </script>
+</body>
+
+</html>
