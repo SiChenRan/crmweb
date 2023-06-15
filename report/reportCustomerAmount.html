@@ -107,6 +107,7 @@
             type: "get",
             url: "http://localhost:8080/report/getAmountByReCusID",
             dataType: "json",
+            headers: {token: localStorage.getItem("token")},
             success: function (obj) {
                 myChart.setOption({
                     xAxis: {
@@ -131,10 +132,11 @@
             type: "get",
             url: "http://localhost:8080/report/getAmountByReCusID", // 替换为获取所有用户名的接口 URL
             dataType: "json",
+            headers: {token: localStorage.getItem("token")},
             success: function (data) {
                 myChart.setOption({
-                    xAxis: { data: data.items },
-                    series: [{ data: data.values }]
+                    xAxis: {data: data.items},
+                    series: [{data: data.values}]
                 });
             }
         });
