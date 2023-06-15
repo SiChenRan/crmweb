@@ -93,17 +93,7 @@
             }
         })
         // 页面加载完成后，查询所有用户名并显示初始图表
-        $.ajax({
-            type: "get",
-            url: "http://localhost:8080/report/getCustomerCountByRegion", // 替换为获取所有用户名的接口 URL
-            dataType: "json",
-            success: function (data) {
-                myChart.setOption({
-                    xAxis: { data: data.items },
-                    series: [{ data: data.values }]
-                });
-            }
-        });
+
 
     });
 
