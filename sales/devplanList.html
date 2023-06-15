@@ -56,16 +56,15 @@
                 , {field: 'devDesc', title: '计划内容'}
                 , {field: 'devDateexec', title: '执行日期', width: 120} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
                 , {field: 'devResult', title: '执行结果'}
-                , {field: 'devExecutor', title: '执行人',width: 100}
+                , {field: 'devExecutor', title: '执行人', width: 100}
             ]]
         });
 
         //头工具栏事件
         table.on('toolbar(test)', function (obj) {
-            if (addSalId===undefined){
+            if (addSalId === undefined) {
                 layer.msg("当前页面仅显示所有开发计划的信息，若需继续操作请通过我的销售机会模块进入！")
-            }
-            else {
+            } else {
                 var checkStatus = table.checkStatus(obj.config.id);
                 var data = checkStatus.data;
                 switch (obj.event) {
