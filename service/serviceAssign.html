@@ -51,8 +51,8 @@
             url: "http://localhost:8080/sysUser/getSalesList",
             dataType: "json",
             success: function (obj) { //后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
-                for (let i = 0; i < obj.data.length; i++) {
-                    $("#handler").append('<option value="' + obj.data[i].suName + '">' + obj.data[i].suName + '</option>')
+                for (let i = 0; i < obj.length; i++) {
+                    $("#handler").append('<option value="' + obj[i].suName + '">' + obj[i].suName + '</option>')
                 }
                 form.render();  //解决动态改变的标签没生效的问题
             }
