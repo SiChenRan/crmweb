@@ -137,7 +137,7 @@
         <div class="layui-body">
             <!-- 内容主体区域 -->
             <div style="padding: 15px;">
-                <iframe frameborder="0" height=650px name="content" src="indexcarousel.html" width=100%></iframe>
+                <iframe frameborder="0" height=650px name="content" width=100%></iframe>
             </div>
         </div>
 
@@ -184,6 +184,7 @@
                 , headers: {token: localStorage.getItem("token")}
 
                 , success: function (obj) {//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容
+                    console.log(obj.obj)
                     if (obj.obj > 0) {
                         layer.open({
                             type: 1
@@ -199,7 +200,7 @@
                             , success: function (layero) {
                                 var btn = layero.find('.layui-layer-btn');
                                 btn.find('.layui-layer-btn0').attr({
-                                    href: '/customerloss/customerlosslist.html'
+                                    href: 'customerloss/customerlosslist.html'
                                     , target: 'content'
                                 });
                             }
