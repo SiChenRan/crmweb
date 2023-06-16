@@ -232,9 +232,10 @@
         });
         table.on('tool(test)', function (obj) {
             var data = obj.data;
-            if (data.salState !== "已分配") {
-                layer.msg("该客户已成功开发或终止开发！")
-            } else {
+            console.log()
+            if (data.salState === 2) {
+                // layer.msg("该客户已成功开发或终止开发！")
+
                 //console.log(obj)
                 if (obj.event === 'success') {
                     layer.confirm('客户开发确定成功吗？', function (index) {
@@ -268,7 +269,10 @@
                         layer.msg("已确认终止该客户的开发")
                     });
                 }
+            } else {
+                layer.msg("该客户已成功开发或终止开发！")
             }
+
         });
     })
 </script>

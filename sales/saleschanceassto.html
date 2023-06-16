@@ -53,6 +53,7 @@
         $.ajax({
             type: "get",
             url: "http://localhost:8080/sysUser/getSalesList",
+            headers: {token: localStorage.getItem("token")},
             dataType: "json",
             success: function (obj) {
                 debugger//后台方法成功执行并返回结果时，会调用这个方法，参数是后台返回的内容

@@ -177,6 +177,7 @@
                                 type: "post"
                                 , url: "http://localhost:8080/saleChance/deleteSaleChance"
                                 , dataType: "json"
+                                , headers: {token: localStorage.getItem("token")}
                                 , data: {
                                     ids: arr.join(",")//使用join方法把数组元素用","拼接为字符串，结果如“1，3，5”
                                 }
